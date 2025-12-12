@@ -1,0 +1,63 @@
+{
+    "name": "mysql-mcp",
+    "version": "0.1.0",
+    "description": "Enterprise-grade MySQL MCP Server with OAuth 2.0 authentication, connection pooling & tool filtering",
+    "type": "module",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "bin": {
+        "mysql-mcp": "dist/cli.js"
+    },
+    "scripts": {
+        "build": "tsc",
+        "dev": "tsc --watch",
+        "lint": "eslint src/",
+        "lint:fix": "eslint src/ --fix",
+        "typecheck": "tsc --noEmit",
+        "test": "vitest run",
+        "test:watch": "vitest",
+        "check": "npm run lint && npm run typecheck"
+    },
+    "keywords": [
+        "mcp",
+        "mysql",
+        "database",
+        "model-context-protocol",
+        "ai",
+        "llm",
+        "claude",
+        "cursor",
+        "oauth",
+        "typescript"
+    ],
+    "author": "Adamic.tech",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/neverinfamous/mysql-mcp.git"
+    },
+    "bugs": {
+        "url": "https://github.com/neverinfamous/mysql-mcp/issues"
+    },
+    "homepage": "https://github.com/neverinfamous/mysql-mcp#readme",
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "dependencies": {
+        "@modelcontextprotocol/sdk": "^1.0.0",
+        "commander": "^12.1.0",
+        "cors": "^2.8.5",
+        "jose": "^5.9.6",
+        "mysql2": "^3.11.5",
+        "zod": "^3.24.1"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.28.0",
+        "@types/cors": "^2.8.17",
+        "@types/node": "^22.10.2",
+        "eslint": "^9.28.0",
+        "typescript": "^5.9.3",
+        "typescript-eslint": "^8.33.1",
+        "vitest": "^3.1.4"
+    }
+}
