@@ -2,7 +2,7 @@ name: "CodeQL Analysis"
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
     paths:
       - '**.js'
       - '**.jsx'
@@ -12,7 +12,7 @@ on:
       - '**.cjs'
       - 'package.json'
   pull_request:
-    branches: [ "main" ]
+    branches: [ "master" ]
     paths:
       - '**.js'
       - '**.jsx'
@@ -38,7 +38,7 @@ jobs:
       matrix:
         language: [ 'javascript-typescript' ]
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v4
     - name: Check for JS/TS files
       id: check-files
       run: |
@@ -47,17 +47,18 @@ jobs:
         else
           echo "has_code=false" >> $GITHUB_OUTPUT
         fi
-    - uses: github/codeql-action/init@v4
+    - uses: github/codeql-action/init@v3
       if: steps.check-files.outputs.has_code == 'true'
       with:
         languages: ${{ matrix.language }}
         queries: security-extended,security-and-quality
-    - uses: github/codeql-action/autobuild@v4
+    - uses: github/codeql-action/autobuild@v3
       if: steps.check-files.outputs.has_code == 'true'
-    - uses: github/codeql-action/analyze@v4
+    - uses: github/codeql-action/analyze@v3
       if: steps.check-files.outputs.has_code == 'true'
       with:
         category: "/language:${{matrix.language}}"
     - name: Skip notification
       if: steps.check-files.outputs.has_code == 'false'
       run: echo "No JavaScript/TypeScript files found. Skipping CodeQL analysis."
+
