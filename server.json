@@ -1,0 +1,33 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
+  "name": "io.github.neverinfamous/mysql-mcp",
+  "description": "Enterprise-grade MySQL MCP Server with OAuth 2.0, 106 tools, and Docker deployment",
+  "version": "1.0.0",
+  "packages": [
+    {
+      "registryType": "oci",
+      "identifier": "docker.io/writenotenow/mysql-mcp:v1.0.0",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ],
+  "keywords": [
+    "mcp",
+    "mysql",
+    "database",
+    "model-context-protocol",
+    "oauth",
+    "docker"
+  ],
+  "author": {
+    "name": "Adamic.tech"
+  },
+  "homepage": "https://github.com/neverinfamous/mysql-mcp",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/neverinfamous/mysql-mcp.git",
+    "source": "github"
+  },
+  "license": "MIT"
+}

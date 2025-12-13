@@ -36,6 +36,9 @@ RUN npm run build
 # -----------------
 FROM node:20-alpine AS runtime
 
+# MCP Registry label for package validation
+LABEL io.modelcontextprotocol.server.name="io.github.neverinfamous/mysql-mcp"
+
 WORKDIR /app
 
 # Upgrade Alpine base packages to fix CVEs

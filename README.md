@@ -1,5 +1,7 @@
 # mysql-mcp
 
+<!-- mcp-name: io.github.neverinfamous/mysql-mcp -->
+
 *Last updated December 13, 2025 - Production/Stable v1.0.0*
 
 *Enterprise-grade MySQL MCP Server with OAuth 2.0 authentication, connection pooling & tool filtering – TypeScript Edition*
