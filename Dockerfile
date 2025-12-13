@@ -41,6 +41,13 @@ WORKDIR /app
 # Upgrade Alpine base packages to fix CVEs
 RUN apk upgrade --no-cache
 
+# Upgrade npm to fix CVEs in bundled dependencies:
+# - CVE-2024-21538: cross-spawn < 7.0.5
+# - CVE-2025-64756: glob < 10.5.0
+# - CVE-2025-5889: brace-expansion <= 2.0.1
+RUN npm install -g npm@latest && \
+    npm cache clean --force
+
 # Create non-root user for security
 RUN addgroup -g 1001 app && \
     adduser -D -u 1001 -G app app
