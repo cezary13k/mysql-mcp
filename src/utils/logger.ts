@@ -15,19 +15,36 @@ interface LogEntry {
 
 /**
  * Sensitive patterns to redact from logs
+ * Note: Patterns are designed to avoid ReDoS by using non-overlapping character classes
+ * and avoiding nested quantifiers on ambiguous patterns.
  */
 const SENSITIVE_PATTERNS = [
-    /password[=:]\s*['"]?[^'"\s,;]+['"]?/gi,
-    /secret[=:]\s*['"]?[^'"\s,;]+['"]?/gi,
-    /token[=:]\s*['"]?[^'"\s,;]+['"]?/gi,
-    /authorization:\s*bearer\s+[^\s]+/gi,
-    /mysql:\/\/[^:]+:[^@]+@/gi,
+    // Use word boundaries and specific character classes to avoid backtracking
+    /\bpassword[=:]\s*[^\s,;]{1,100}/gi,
+    /\bsecret[=:]\s*[^\s,;]{1,100}/gi,
+    /\btoken[=:]\s*[^\s,;]{1,100}/gi,
+    /\bauthorization:\s*bearer\s+\S{1,500}/gi,
+    // MySQL connection string - use specific pattern with length limits
+    /mysql:\/\/[^:]{1,50}:[^@]{1,100}@/gi,
 ];
+
+/**
+ * Maximum length of input to process with regex
+ * Prevents ReDoS on extremely long strings
+ */
+const MAX_REDACT_LENGTH = 10000;
 
 /**
  * Redact sensitive information from a string
  */
 function redactSensitive(input: string): string {
+    // Limit input length to prevent ReDoS attacks
+    if (input.length > MAX_REDACT_LENGTH) {
+        // For very long strings, truncate and add indicator
+        // codeql[js/polynomial-redos] - Input is length-limited before regex processing
+        return redactSensitive(input.substring(0, MAX_REDACT_LENGTH)) + '...[TRUNCATED]';
+    }
+
     let result = input;
     for (const pattern of SENSITIVE_PATTERNS) {
         result = result.replace(pattern, (match) => {
