@@ -60,7 +60,8 @@ export const TOOL_GROUP_SCOPES: Record<ToolGroup, StandardScope> = {
     replication: SCOPES.ADMIN,
     partitioning: SCOPES.ADMIN,
     transactions: SCOPES.WRITE,
-    router: SCOPES.READ
+    router: SCOPES.READ,
+    proxysql: SCOPES.READ
 };
 
 // =============================================================================

@@ -1,5 +1,7 @@
 # mysql-mcp
 
+*Last updated December 13, 2025*
+
 *Enterprise-grade MySQL MCP Server with OAuth 2.0 authentication, connection pooling & tool filtering – TypeScript Edition*
 
 > **BETA** - This project is actively being developed and is not yet ready for production use.
@@ -28,6 +30,7 @@ A **MySQL MCP Server** with OAuth 2.0 authentication, connection pooling, and gr
 - [📚 MCP Client Configuration](#-mcp-client-configuration)
 - [🔌 Connection Pooling](#-connection-pooling)
 - [🔀 MySQL Router Configuration](#-mysql-router-configuration)
+- [🐙 ProxySQL Configuration](#-proxysql-configuration)
 - [🎛️ Tool Filtering Presets](#️-tool-filtering-presets)
 - [📊 Tool Categories](#-tool-categories)
 
@@ -205,7 +208,7 @@ Unlike SQLite (file-based), MySQL is a server-based database that benefits from 
 ## 🎛️ Tool Filtering Presets
 
 > [!IMPORTANT]
-> **AI-enabled IDEs like Cursor have tool limits.** With 84 tools, you should use tool filtering to stay within limits and optimize for your use case. Choose a preset below.
+> **AI-enabled IDEs like Cursor have tool limits.** With 96 tools, you should use tool filtering to stay within limits and optimize for your use case. Choose a preset below.
 
 ### Tool Groups
 
@@ -224,6 +227,7 @@ Unlike SQLite (file-based), MySQL is a server-based database that benefits from 
 | `partitioning` | 4 | Partition management |
 | `transactions` | 7 | Transaction control |
 | `router` | 9 | MySQL Router management |
+| `proxysql` | 12 | ProxySQL proxy management |
 
 ### Preset: Minimal (~30 tools) ⭐ Recommended for most users
 
@@ -238,7 +242,7 @@ Core database operations with JSON and text. Best for general development.
         "C:/path/to/mysql-mcp/dist/cli.js",
         "--transport", "stdio",
         "--mysql", "mysql://user:password@localhost:3306/database",
-        "--tool-filter", "-performance,-optimization,-backup,-replication,-partitioning,-monitoring,-router"
+        "--tool-filter", "-performance,-optimization,-backup,-replication,-partitioning,-monitoring,-router,-proxysql"
       ]
     }
   }
@@ -306,7 +310,7 @@ Create your own filter using the syntax:
 
 ## 📊 Tool Categories
 
-This server provides **84 tools** across 13 categories:
+This server provides **96 tools** across 14 categories:
 
 ### Core Database (8 tools)
 
@@ -459,6 +463,26 @@ This server provides **84 tools** across 13 categories:
 | `mysql_router_route_blocked_hosts` | List blocked IP addresses for a route |
 | `mysql_router_metadata_status` | ⚠️ InnoDB Cluster metadata cache status |
 | `mysql_router_pool_status` | ⚠️ Connection pool statistics |
+
+### ProxySQL (12 tools)
+
+> [!NOTE]
+> ProxySQL tools require access to ProxySQL admin interface (default port 6032).
+
+| Tool | Description |
+|------|-------------|
+| `proxysql_status` | Get ProxySQL version, uptime, and runtime stats |
+| `proxysql_servers` | List configured backend MySQL servers |
+| `proxysql_hostgroups` | List hostgroup configurations and connection stats |
+| `proxysql_query_rules` | List query routing rules |
+| `proxysql_query_digest` | Get query digest statistics (top queries) |
+| `proxysql_connection_pool` | Get connection pool statistics per server |
+| `proxysql_users` | List configured MySQL users |
+| `proxysql_global_variables` | Get global variables (mysql-* and admin-*) |
+| `proxysql_runtime_status` | Get runtime configuration status |
+| `proxysql_memory_stats` | Get memory usage metrics |
+| `proxysql_commands` | Execute LOAD/SAVE admin commands |
+| `proxysql_process_list` | Get active sessions like SHOW PROCESSLIST |
 
 [⬆️ Back to Table of Contents](#-table-of-contents)
 
@@ -649,6 +673,86 @@ If you only want Router tools (e.g., for a dedicated monitoring agent):
 ```
 
 This exposes only the 9 Router management tools.
+
+### ProxySQL-Only Configuration
+
+If you only want ProxySQL tools:
+
+```json
+{
+  "args": [
+    "--transport", "stdio",
+    "--mysql", "mysql://user:password@localhost:3306/database",
+    "--tool-filter", "-core,-json,-text,-fulltext,-performance,-optimization,-admin,-monitoring,-backup,-replication,-partitioning,-transactions,-router"
+  ]
+}
+```
+
+This exposes only the 12 ProxySQL management tools.
+
+[⬆️ Back to Table of Contents](#-table-of-contents)
+
+---
+
+## 🐙 ProxySQL Configuration
+
+If using ProxySQL tools for proxy management, you need to configure access to the ProxySQL admin interface.
+
+### Prerequisites
+
+- ProxySQL 2.x+ with admin interface enabled
+- Admin interface credentials (default: admin/admin on port 6032)
+- Network access to ProxySQL admin port
+
+### Setting Up ProxySQL Admin Access
+
+#### 1. Default Admin Interface
+
+ProxySQL's admin interface is enabled by default on port 6032. Connect using:
+
+```bash
+mysql -h127.0.0.1 -P6032 -uadmin -padmin
+```
+
+#### 2. Configure Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PROXYSQL_HOST` | `localhost` | ProxySQL admin interface host |
+| `PROXYSQL_PORT` | `6032` | ProxySQL admin port |
+| `PROXYSQL_USER` | `admin` | Admin username |
+| `PROXYSQL_PASSWORD` | `admin` | Admin password |
+
+> [!CAUTION]
+> **Change default ProxySQL admin credentials in production.** Use environment variables or secure secrets management.
+
+### MCP Client Configuration with ProxySQL
+
+```json
+{
+  "mcpServers": {
+    "mysql-mcp": {
+      "command": "node",
+      "args": [
+        "C:/path/to/mysql-mcp/dist/cli.js",
+        "--transport", "stdio",
+        "--mysql", "mysql://user:password@localhost:3306/database"
+      ],
+      "env": {
+        "MYSQL_HOST": "localhost",
+        "MYSQL_PORT": "3306",
+        "MYSQL_USER": "app_user",
+        "MYSQL_PASSWORD": "secure_password",
+        "MYSQL_DATABASE": "production",
+        "PROXYSQL_HOST": "localhost",
+        "PROXYSQL_PORT": "6032",
+        "PROXYSQL_USER": "admin",
+        "PROXYSQL_PASSWORD": "admin"
+      }
+    }
+  }
+}
+```
 
 [⬆️ Back to Table of Contents](#-table-of-contents)
 

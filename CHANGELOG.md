@@ -21,12 +21,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New `router` tool group for filtering Router tools
 - Router REST API configuration via environment variables
 - Comprehensive Router setup documentation in README
+- **ProxySQL Support** - 12 new tools for monitoring ProxySQL proxy
+  - `proxysql_status` - Get ProxySQL version, uptime, and runtime stats
+  - `proxysql_servers` - List configured backend MySQL servers
+  - `proxysql_hostgroups` - List hostgroup configurations and connection stats
+  - `proxysql_query_rules` - List query routing rules
+  - `proxysql_query_digest` - Get query digest statistics (top queries)
+  - `proxysql_connection_pool` - Get connection pool statistics per server
+  - `proxysql_users` - List configured MySQL users
+  - `proxysql_global_variables` - Get global variables (mysql-* and admin-*)
+  - `proxysql_runtime_status` - Get runtime configuration status
+  - `proxysql_memory_stats` - Get memory usage metrics
+  - `proxysql_commands` - Execute LOAD/SAVE admin commands
+  - `proxysql_process_list` - Get active sessions like SHOW PROCESSLIST
+- New `proxysql` tool group for filtering ProxySQL tools
+- ProxySQL admin interface configuration via environment variables
+- Comprehensive ProxySQL setup documentation in README
 
 ### Changed
-- Total tools increased from 75 to 84
-- Tool groups increased from 12 to 13
-- Updated `.env.example` with Router configuration template
-- Updated minimal preset to exclude Router tools by default
+- Total tools increased from 75 to 96
+- Tool groups increased from 12 to 14
+- Updated `.env.example` with Router and ProxySQL configuration templates
+- Updated minimal preset to exclude Router and ProxySQL tools by default
 
 ## [0.1.0] - 2025-12-13
 

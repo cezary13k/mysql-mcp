@@ -27,3 +27,6 @@ export { getReplicationTools, getPartitioningTools } from './replication.js';
 
 // Router management tools
 export { getRouterTools } from './router.js';
+
+// ProxySQL management tools
+export { getProxySQLTools } from './proxysql.js';

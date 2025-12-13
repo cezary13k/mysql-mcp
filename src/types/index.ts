@@ -408,7 +408,8 @@ export type ToolGroup =
     | 'replication'    // Master/slave, binlog
     | 'partitioning'   // Partition management
     | 'transactions'   // Transaction control
-    | 'router';        // MySQL Router management
+    | 'router'         // MySQL Router management
+    | 'proxysql';      // ProxySQL management
 
 /**
  * MySQL Router REST API configuration
