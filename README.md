@@ -212,7 +212,7 @@ If you installed MySQL directly on your computer (via installer, Homebrew, apt, 
 }
 ```
 
-#### 🐳 Docker MySQL (MySQL Running in a Container)
+#### 🐳 Docker MySQL (MySQL Running in a Docker Container)
 
 If MySQL is running in a Docker container on the same host:
 
