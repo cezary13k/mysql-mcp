@@ -248,7 +248,7 @@ export abstract class DatabaseAdapter {
      */
     protected registerPrompt(server: McpServer, prompt: PromptDefinition): void {
         // Build Zod schema from prompt.arguments definitions
-        const zodShape: Record<string, z.ZodTypeAny> = {};
+        const zodShape: Record<string, z.ZodType> = {};
         if (prompt.arguments) {
             for (const arg of prompt.arguments) {
                 zodShape[arg.name] = arg.required

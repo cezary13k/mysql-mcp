@@ -67,6 +67,14 @@ function getShellConfig(): ShellConfig {
     };
 }
 
+/**
+ * Escape a string for safe embedding in JavaScript string literals.
+ * Escapes backslashes first, then double quotes, to prevent injection attacks.
+ */
+function escapeForJS(str: string): string {
+    return str.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+}
+
 // =============================================================================
 // Subprocess Execution Helper
 // =============================================================================
@@ -277,7 +285,7 @@ function createShellCheckUpgradeTool(): ToolDefinition {
 
             // Use connection URI string instead of session object
             // The util.checkForServerUpgrade() accepts a URI string as first arg
-            const escapedUri = config.connectionUri.replace(/"/g, '\\"');
+            const escapedUri = escapeForJS(config.connectionUri);
             let jsCode = `return util.checkForServerUpgrade("${escapedUri}"`;
 
             const options: string[] = [];
@@ -332,7 +340,7 @@ function createShellExportTableTool(): ToolDefinition {
                 options.push('fieldsTerminatedBy: "\\t"');
             }
             if (where) {
-                options.push(`where: "${where.replace(/"/g, '\\"')}"`);
+                options.push(`where: "${escapeForJS(where)}"`);
             }
             if (columns && columns.length > 0) {
                 options.push(`columns: ${JSON.stringify(columns)}`);
@@ -629,7 +637,7 @@ function createShellDumpTablesTool(): ToolDefinition {
             }
             if (where && Object.keys(where).length > 0) {
                 const whereEntries = Object.entries(where)
-                    .map(([tbl, cond]) => `"${tbl}": "${cond.replace(/"/g, '\\"')}"`)
+                    .map(([tbl, cond]) => `"${escapeForJS(tbl)}": "${escapeForJS(cond)}"`)
                     .join(', ');
                 options.push(`where: { ${whereEntries} }`);
             }
