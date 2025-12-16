@@ -43,8 +43,8 @@ describe('Performance Tests', () => {
         });
 
         it('should cache getAllToolNames for subsequent calls', () => {
-            // First call builds the cache
-            const firstCallTime = measureTime(() => {
+            // First call clears and rebuilds the cache
+            measureTime(() => {
                 clearToolFilterCaches();
                 getAllToolNames();
             }, 10);

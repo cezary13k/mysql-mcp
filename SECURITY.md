@@ -4,6 +4,7 @@
 
 | Version | Supported          |
 | ------- | ------------------ |
+| 2.0.x   | :white_check_mark: |
 | 1.0.x   | :white_check_mark: |
 | 0.x.x   | :x:                |
 
@@ -19,6 +20,12 @@ Our Docker images are built with security best practices:
 - **npm updates** - npm upgraded to latest in image to patch bundled dependency CVEs
 - **SBOM generation** - Software Bill of Materials included with each image
 - **Provenance attestation** - Supply chain attestations for image verification
+
+### Router API TLS Certificate Bypass
+
+When connecting to MySQL Router's REST API with self-signed certificates, set `MYSQL_ROUTER_INSECURE=true`. This **temporarily disables TLS certificate validation** for Router API requests only.
+
+> **⚠️ CAUTION**: This bypasses certificate validation and is vulnerable to man-in-the-middle attacks. Only use in development/testing environments with trusted networks.
 
 ### Automated Security Scanning
 

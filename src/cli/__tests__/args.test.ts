@@ -1,9 +1,9 @@
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { parseArgs } from '../args.js';
 
 // Mock process.exit
-const mockExit = vi.spyOn(process, 'exit').mockImplementation((code?: number | string | null | undefined) => {
+vi.spyOn(process, 'exit').mockImplementation((code?: number | string | null | undefined) => {
     throw new Error(`process.exit(${code})`);
 });
 

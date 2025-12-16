@@ -47,7 +47,6 @@ vi.mock('../../utils/logger.js', () => ({
     }
 }));
 
-import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 
 describe('HttpTransport', () => {
     let transport: HttpTransport;

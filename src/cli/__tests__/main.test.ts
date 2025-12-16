@@ -17,8 +17,6 @@ vi.mock('../args.js', () => ({
 
 // Mock process methods
 const originalExit = process.exit;
-const originalConsoleError = console.error;
-const originalOn = process.on;
 
 describe('CLI Main', () => {
     let mockServer: any;
@@ -136,7 +134,7 @@ describe('CLI Main', () => {
             oauth: oauthConfig
         });
 
-        expect(mockConsoleError).toHaveBeenCalledWith(expect.stringContaining('OAuth enabled'));
+        expect(mockConsoleError).toHaveBeenCalledWith('OAuth authentication enabled');
     });
 
     it('should handle adapter connection errors', async () => {

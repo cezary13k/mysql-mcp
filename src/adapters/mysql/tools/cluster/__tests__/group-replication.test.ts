@@ -2,9 +2,6 @@
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import {
     createGRStatusTool,
-    createGRMembersTool,
-    createGRPrimaryTool,
-    createGRTransactionsTool,
     createGRFlowControlTool
 } from '../group-replication.js';
 import { MySQLAdapter } from '../../../MySQLAdapter.js';

@@ -21,7 +21,6 @@ vi.mock('jose', async () => {
 });
 
 import * as jose from 'jose';
-import { JwksFetchError } from '../errors.js';
 
 describe('TokenValidator', () => {
     let validator: TokenValidator;

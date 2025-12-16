@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { ProgressReporter, progressFactory } from '../ProgressReporter.js';
+import { ProgressReporter } from '../ProgressReporter.js';
 
 describe('ProgressReporter', () => {
     let mockServer: {

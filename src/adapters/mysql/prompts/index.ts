@@ -161,7 +161,7 @@ ${args['sql']}
 \`\`\`
 
 **Tool to use**: \`${toolName}\`
-**Arguments**: \`{ "query": "${(args['sql'] ?? '').replace(/"/g, '\\"')}" }\`
+**Arguments**: \`{ "query": "${(args['sql'] ?? '').replace(/\\/g, '\\\\').replace(/"/g, '\\"')}" }\`
 `);
         }
     };

@@ -38,7 +38,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Transaction-Aware Queries** - Added optional `transactionId` parameter to `mysql_read_query` and `mysql_write_query` tools, enabling interactive queries within active transactions.
 - **All 191 tools and 26 resources fully tested** - Comprehensive testing completed including InnoDB Cluster (3-node Group Replication), MySQL Router REST API, ProxySQL admin interface, and MySQL Shell utilities.
 
+### Security
+
+- **CodeQL Remediation** - Fixed 3 security vulnerabilities identified by CodeQL analysis:
+  - Removed sensitive OAuth configuration logging (issuer/audience) from startup output
+  - Added explicit warning when Router API TLS certificate validation is bypassed
+  - Fixed incomplete string escaping in quick query prompt (now escapes backslashes before quotes)
+
 ### Fixed
+
+- Removed unused imports and variables from 9 test files to improve code quality (CodeQL alerts #8-18)
 - **ProxySQL Runtime Status** - Fixed `proxysql_runtime_status` failing with SQL syntax error "near 'version': syntax error". The tool was using `@@admin-version` syntax which is not supported by ProxySQL's SQLite-based admin interface. Now correctly queries `global_variables` table.
 - **CRITICAL: MCP stdio Transport Crash** - Removed debug `console.error` in `MySQLAdapter.executeOnConnection()` that was writing to stderr and corrupting the MCP stdio JSON-RPC message stream, causing the server to crash when any tool was called. This was introduced during the DDL support improvements.
 - **DDL Support** - Fixed `mysql_write_query` failing on DDL statements (like `CREATE TABLE`, `CREATE USER`) by implementing automatic fallback to the text protocol when the specific "not supported in prepared statement protocol" error is encountered.

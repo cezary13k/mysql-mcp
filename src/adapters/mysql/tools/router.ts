@@ -59,8 +59,10 @@ async function routerFetch(
     }
 
     // Handle self-signed certificates when insecure mode is enabled
+    // WARNING: This bypasses TLS certificate validation - use only for development/testing
     const originalTlsReject = process.env['NODE_TLS_REJECT_UNAUTHORIZED'];
     if (insecure && baseUrl.startsWith('https://')) {
+        console.error('WARNING: TLS certificate validation disabled for Router API request. This is insecure and should only be used for development/testing.');
         process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
     }
 

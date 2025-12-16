@@ -1,5 +1,5 @@
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { main } from '../cli.js';
 
 // Hoist mocks to be accessible in vi.mock factory
@@ -112,7 +112,7 @@ describe('CLI', () => {
                 }
             });
 
-            expect(mockConsoleError).toHaveBeenCalledWith(expect.stringContaining('OAuth enabled: issuer=https://issuer.com'));
+            expect(mockConsoleError).toHaveBeenCalledWith('OAuth authentication enabled');
         });
 
 

@@ -34,9 +34,9 @@ export async function main(
         process.exit(1);
     }
 
-    // Log OAuth status
+    // Log OAuth status (without exposing sensitive configuration)
     if (oauth?.enabled) {
-        console.error(`OAuth enabled: issuer=${oauth.issuer ?? 'not set'}, audience=${oauth.audience ?? 'not set'}`);
+        console.error('OAuth authentication enabled');
     }
 
     // Create server
