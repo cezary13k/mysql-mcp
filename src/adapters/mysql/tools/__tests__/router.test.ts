@@ -476,14 +476,14 @@ describe('Authentication and TLS Handling', () => {
         expect(headers['Authorization']).toBeUndefined();
     });
 
-    it('should set NODE_TLS_REJECT_UNAUTHORIZED=0 for HTTPS with insecure=true', async () => {
+    it('should use custom dispatcher for HTTPS with insecure=true', async () => {
         process.env['MYSQL_ROUTER_URL'] = 'https://localhost:8443';
         process.env['MYSQL_ROUTER_INSECURE'] = 'true';
 
-        let capturedTlsSetting: string | undefined;
+        let capturedOptions: Record<string, unknown> | undefined;
 
-        mockFetch.mockImplementation(async () => {
-            capturedTlsSetting = process.env['NODE_TLS_REJECT_UNAUTHORIZED'];
+        mockFetch.mockImplementation(async (_url: string, options: Record<string, unknown>) => {
+            capturedOptions = options;
             return { ok: true, json: () => Promise.resolve({}) };
         });
 
@@ -491,47 +491,37 @@ describe('Authentication and TLS Handling', () => {
         const tool = tools.find(t => t.name === 'mysql_router_status')!;
         await tool.handler({}, createMockRequestContext());
 
-        expect(capturedTlsSetting).toBe('0');
+        // Should have dispatcher set for insecure HTTPS requests
+        expect(capturedOptions?.dispatcher).toBeDefined();
     });
 
-    it('should restore original TLS setting after request when it was defined', async () => {
+    it('should not set dispatcher for secure HTTPS requests', async () => {
         process.env['MYSQL_ROUTER_URL'] = 'https://localhost:8443';
-        process.env['MYSQL_ROUTER_INSECURE'] = 'true';
-        process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '1';
+        process.env['MYSQL_ROUTER_INSECURE'] = 'false';
 
-        mockFetch.mockResolvedValue({ ok: true, json: () => Promise.resolve({}) });
+        let capturedOptions: Record<string, unknown> | undefined;
+
+        mockFetch.mockImplementation(async (_url: string, options: Record<string, unknown>) => {
+            capturedOptions = options;
+            return { ok: true, json: () => Promise.resolve({}) };
+        });
 
         const tools = getRouterTools(createMockMySQLAdapter() as unknown as MySQLAdapter);
         const tool = tools.find(t => t.name === 'mysql_router_status')!;
         await tool.handler({}, createMockRequestContext());
 
-        expect(process.env['NODE_TLS_REJECT_UNAUTHORIZED']).toBe('1');
+        // Should not have dispatcher for secure requests
+        expect(capturedOptions?.dispatcher).toBeUndefined();
     });
 
-    it('should delete TLS setting if originally undefined', async () => {
-        process.env['MYSQL_ROUTER_URL'] = 'https://localhost:8443';
-        process.env['MYSQL_ROUTER_INSECURE'] = 'true';
-        // Ensure it's undefined for this test
-        delete process.env['NODE_TLS_REJECT_UNAUTHORIZED'];
-
-        mockFetch.mockResolvedValue({ ok: true, json: () => Promise.resolve({}) });
-
-        const tools = getRouterTools(createMockMySQLAdapter() as unknown as MySQLAdapter);
-        const tool = tools.find(t => t.name === 'mysql_router_status')!;
-        await tool.handler({}, createMockRequestContext());
-
-        expect(process.env['NODE_TLS_REJECT_UNAUTHORIZED']).toBeUndefined();
-    });
-
-    it('should not modify TLS setting for HTTP URLs even with insecure=true', async () => {
+    it('should not set dispatcher for HTTP URLs even with insecure=true', async () => {
         process.env['MYSQL_ROUTER_URL'] = 'http://localhost:8080';
         process.env['MYSQL_ROUTER_INSECURE'] = 'true';
-        process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '1';
 
-        let capturedTlsSetting: string | undefined;
+        let capturedOptions: Record<string, unknown> | undefined;
 
-        mockFetch.mockImplementation(async () => {
-            capturedTlsSetting = process.env['NODE_TLS_REJECT_UNAUTHORIZED'];
+        mockFetch.mockImplementation(async (_url: string, options: Record<string, unknown>) => {
+            capturedOptions = options;
             return { ok: true, json: () => Promise.resolve({}) };
         });
 
@@ -539,23 +529,22 @@ describe('Authentication and TLS Handling', () => {
         const tool = tools.find(t => t.name === 'mysql_router_status')!;
         await tool.handler({}, createMockRequestContext());
 
-        // Should remain '1', not changed to '0'
-        expect(capturedTlsSetting).toBe('1');
+        // Should not have dispatcher for HTTP URLs
+        expect(capturedOptions?.dispatcher).toBeUndefined();
     });
 
-    it('should restore TLS setting even when fetch throws', async () => {
+    it('should not modify NODE_TLS_REJECT_UNAUTHORIZED env var', async () => {
         process.env['MYSQL_ROUTER_URL'] = 'https://localhost:8443';
         process.env['MYSQL_ROUTER_INSECURE'] = 'true';
-        process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '1';
+        const originalValue = process.env['NODE_TLS_REJECT_UNAUTHORIZED'];
 
-        mockFetch.mockRejectedValue(new Error('Network error'));
+        mockFetch.mockResolvedValue({ ok: true, json: () => Promise.resolve({}) });
 
         const tools = getRouterTools(createMockMySQLAdapter() as unknown as MySQLAdapter);
         const tool = tools.find(t => t.name === 'mysql_router_status')!;
+        await tool.handler({}, createMockRequestContext());
 
-        await expect(tool.handler({}, createMockRequestContext())).rejects.toThrow('Network error');
-
-        // Should still be restored
-        expect(process.env['NODE_TLS_REJECT_UNAUTHORIZED']).toBe('1');
+        // New implementation should not modify this env var
+        expect(process.env['NODE_TLS_REJECT_UNAUTHORIZED']).toBe(originalValue);
     });
 });

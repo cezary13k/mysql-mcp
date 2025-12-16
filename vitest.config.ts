@@ -18,12 +18,9 @@ export default defineConfig({
             ],
             include: ['src/**/*.ts']
         },
-        // Pool configuration for better isolation
+        // Pool configuration for single-worker execution (Vitest 4 format)
         pool: 'forks',
-        poolOptions: {
-            forks: {
-                singleFork: true
-            }
-        }
+        maxWorkers: 1,
+        isolate: true
     }
 });

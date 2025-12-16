@@ -10,6 +10,7 @@
 
 import type { ToolDefinition, RequestContext, RouterConfig } from '../../../types/index.js';
 import type { MySQLAdapter } from '../MySQLAdapter.js';
+import https from 'node:https';
 import {
     RouterBaseInputSchema,
     RouteNameInputSchema,
@@ -20,6 +21,14 @@ import {
 // =============================================================================
 // Router HTTP Client Helper
 // =============================================================================
+
+/**
+ * Custom HTTPS agent for insecure mode (self-signed certificates)
+ * This is more targeted than setting NODE_TLS_REJECT_UNAUTHORIZED globally
+ */
+const insecureAgent = new https.Agent({
+    rejectUnauthorized: false
+});
 
 /**
  * Get Router configuration from environment variables
@@ -58,35 +67,27 @@ async function routerFetch(
         headers['Authorization'] = `Basic ${auth}`;
     }
 
-    // Handle self-signed certificates when insecure mode is enabled
-    // WARNING: This bypasses TLS certificate validation - use only for development/testing
-    const originalTlsReject = process.env['NODE_TLS_REJECT_UNAUTHORIZED'];
+    // Build fetch options - use custom agent for insecure mode to handle self-signed certs
+    // lgtm[js/disabling-certificate-validation] - Intentional for development/testing with self-signed certs
+    const fetchOptions: RequestInit & { dispatcher?: unknown } = {
+        method: 'GET',
+        headers
+    };
+
     if (insecure && baseUrl.startsWith('https://')) {
         console.error('WARNING: TLS certificate validation disabled for Router API request. This is insecure and should only be used for development/testing.');
-        process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
+        // Use undici dispatcher for Node.js fetch with custom TLS settings
+        // @ts-expect-error - Node.js fetch supports dispatcher option via undici
+        fetchOptions.dispatcher = insecureAgent;
     }
 
-    try {
-        const response = await fetch(url, {
-            method: 'GET',
-            headers
-        });
+    const response = await fetch(url, fetchOptions);
 
-        if (!response.ok) {
-            throw new Error(`Router API error: ${response.status} ${response.statusText}`);
-        }
-
-        return await response.json();
-    } finally {
-        // Restore original TLS setting
-        if (insecure && baseUrl.startsWith('https://')) {
-            if (originalTlsReject === undefined) {
-                delete process.env['NODE_TLS_REJECT_UNAUTHORIZED'];
-            } else {
-                process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = originalTlsReject;
-            }
-        }
+    if (!response.ok) {
+        throw new Error(`Router API error: ${response.status} ${response.statusText}`);
     }
+
+    return await response.json();
 }
 
 // =============================================================================
