@@ -13,7 +13,7 @@
 ![Tests](https://img.shields.io/badge/Tests-1478%20passing-brightgreen.svg)
 ![Coverage](https://img.shields.io/badge/Coverage-97%25-green.svg)
 
-**[📚 Full Documentation (Wiki)](https://github.com/neverinfamous/mysql-mcp/wiki)** • **[Changelog](CHANGELOG.md)** • **[Security](SECURITY.md)**
+**[📚 Full Documentation (Wiki)](https://github.com/neverinfamous/mysql-mcp/wiki)** • **[Changelog](https://github.com/neverinfamous/mysql-mcp/blob/master/CHANGELOG.md)** • **[Security](https://github.com/neverinfamous/mysql-mcp/blob/master/SECURITY.md)**
 
 ## The Most Comprehensive MySQL MCP Server Available
 
